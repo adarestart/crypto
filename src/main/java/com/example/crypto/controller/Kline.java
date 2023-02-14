@@ -3,27 +3,26 @@ package com.example.crypto.controller;
 import lombok.Data;
 @Data
 public class Kline {
-    private Long openTime;
-    private String symbol;
 
+    private String symbol;
+    private Long openTime;
     private Double openPrice;
     private Double highPrice;
-    private String lowPrice;
-    private String closePrice;
-    private String volume;
+    private Double lowPrice;
+    private Double closePrice;
+    private Double volume;
     private Long closeTime;
-    private String quoteAssetVolume;
+    private Double quoteAssetVolume;
     private Integer numberOfTrades;
-    private String takerBuyBaseAssetVolume;
-    private String takerBuyQuoteAssetVolume;
+    private Double takerBuyBaseAssetVolume;
+    private Double takerBuyQuoteAssetVolume;
 
     public Kline(){
 
     }
-    public Kline(String symbol, Long startTime, String openPrice, String highPrice, String lowPrice, String closePrice, String volume, Long closeTime, String quoteAssetVolume, Integer numberOfTrades, String takerBuyBaseAssetVolume, String takerBuyQuoteAssetVolume){
+    public Kline(String symbol, Long openTime, Double openPrice, Double highPrice, Double lowPrice, Double closePrice, Double volume, Long closeTime, Double quoteAssetVolume, Integer numberOfTrades, Double takerBuyBaseAssetVolume, Double takerBuyQuoteAssetVolume){
         // composite key (symbol, start_time)
-        //
-        this.startTime = startTime;
+        this.openTime = openTime;
         this.symbol = symbol;
         this.openPrice = openPrice;
         this.highPrice = highPrice;
