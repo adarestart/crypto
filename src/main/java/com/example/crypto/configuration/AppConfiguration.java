@@ -1,5 +1,6 @@
 package com.example.crypto.configuration;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,8 @@ public class AppConfiguration {
 
     @Bean(name = "binance")
     public RestTemplate getTemplate(){
-        return new RestTemplate(getClientHttpRequestFactory());
+        //return new RestTemplate(getClientHttpRequestFactory());
+        return new RestTemplate();
     }
 
 //    @Bean(name = "coinbase")
@@ -22,7 +24,7 @@ public class AppConfiguration {
 //        return new RestTemplate(getClientHttpRequestFactory());
 //    }
 
-    private ClientHttpRequestFactory getClientHttpRequestFactory() {
+    public ClientHttpRequestFactory getClientHttpRequestFactory() {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory
                 = new HttpComponentsClientHttpRequestFactory();
         clientHttpRequestFactory.setConnectTimeout(timeout);

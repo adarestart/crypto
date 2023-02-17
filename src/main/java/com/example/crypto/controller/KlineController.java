@@ -1,6 +1,7 @@
 package com.example.crypto.controller;
 
 
+import org.slf4j.Logger;
 import com.example.crypto.service.KlineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,10 @@ public class KlineController {
                                            @PathVariable Long startTime,
                                            @PathVariable Long endTime) {
 
+        System.out.println(symbol + " "+startTime +" "+endTime);
         return service.requestKline(symbol, startTime, endTime);
+        //
+        //symbol=BTCUSDT&interval=1m&startTime=1523577600000&endTime=1523664000000";
 
 
     }

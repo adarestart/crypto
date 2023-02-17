@@ -4,6 +4,8 @@ import com.example.crypto.controller.Kline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,18 +36,20 @@ public class KlineService {
         //return "Hello "+ name + " !"; => result to Null-Pointer Exception
         //return String.format("Hello %s student id is %d !",name, studentId);
         try {
-            handleTime(symbol, startTime, endTime);
-            return klineRepository.findAll();
+            requestKlineByBatch(symbol, startTime, endTime);
+
 
         } catch (Exception e) {
             //throw new RuntimeException(e);
         }
-
+        return klineRepository.findAll();
 
     }
-    public void handleTime(String symbol, Long startTime, Long endTime){
-        Long counter = 500*60*1000L;
-        for(Long time = startTime;time<=endTime;time+=counter){
+    public void requestKlineByBatch(String symbol, Long startTime, Long endTime){
+        //Long counter = 500*60*1000L;
+
+        Long batchSize=500*60*1000L;
+        for(Long time = startTime;time<=endTime;time+=batchSize){
             sendGet(symbol, startTime, endTime);
         }
     }
@@ -53,13 +57,15 @@ public class KlineService {
     public void sendGet(String symbol, Long startTime, Long endTime)  {
         //String getURL = "https://www.binance.com/api/v1/klines?symbol=BTCUSDT&interval=1m&startTime=1523577600000&endTime=1523664000000";
         String url = String.format(getURL, symbol, startTime, endTime);
+        System.out.println(url);
 
         ResponseEntity<String[][]> response
-                = restTemplate.getForEntity(getURL, String[][].class);
+                = restTemplate.getForEntity(url, String[][].class);
         System.out.println(response);
 
         String[][] res = response.getBody();
 
+        List<Kline> klineList = new ArrayList<>();
         for(String[] kline: res){
             //String symbol = "BTCUSDT";
             Long openTime = Long.parseLong(kline[0]);
@@ -73,10 +79,12 @@ public class KlineService {
             Integer numberOfTrades = Integer.parseInt(kline[8]);
             Double takerBuyBaseAssetVolume = Double.parseDouble(kline[9]);
             Double takerBuyQuoteAssetVolume = Double.parseDouble(kline[10]);
+            klineList.add(new Kline(symbol, openTime, openPrice, highPrice, lowPrice, closePrice, volume, closeTime, quoteAssetVolume, numberOfTrades, takerBuyBaseAssetVolume, takerBuyQuoteAssetVolume));
             //Kline newKline = new Kline(symbol, openTime, openPrice, highPrice, lowPrice, closePrice, volume, closeTime, quoteAssetVolume, numberOfTrades, takerBuyBaseAssetVolume, takerBuyQuoteAssetVolume);
-            logger.info("Inserting -> {}", klineRepository.insert(new Kline(symbol, openTime, openPrice, highPrice, lowPrice, closePrice, volume, closeTime, quoteAssetVolume, numberOfTrades, takerBuyBaseAssetVolume, takerBuyQuoteAssetVolume)));
+            //logger.info("Inserting -> {}", klineRepository.insert(new Kline(symbol, openTime, openPrice, highPrice, lowPrice, closePrice, volume, closeTime, quoteAssetVolume, numberOfTrades, takerBuyBaseAssetVolume, takerBuyQuoteAssetVolume)));
 
         }
+        klineRepository.insertBatch(klineList);
     }
 
 }
